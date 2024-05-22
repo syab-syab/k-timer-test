@@ -27,7 +27,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>世界禁欲時計-Patienceday Clock(Doomsday Clockのパクり)-テスト</h1>
+      <h1>我慢sday Clock-世界禁欲時計-テスト</h1>
       <h2>time: { timeStamp }</h2>
     </div>
   );
