@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 // import logo from './logo.svg';
 import './App.css';
+import Stopwatch from './components/Stopwatch';
+
 
 function App() {
   // 例によってUNIX時間の数値を取得する
@@ -16,29 +18,7 @@ function App() {
   //   `${d.getHours().toString()}:${d.getMinutes().toString()}:${d.getSeconds().toString()}`
   // )
 
-  const [clock, setClock] = useState<boolean>(false)
 
-  const clockToggle = (): void => {
-    setClock(!clock)
-    console.log(clock)
-    setStartTime(Date.now())
-    displayTime()
-  }
-
-  // 時、分、秒
-  const [hour, setHour] = useState<string>("00")
-  const [minutes, setMinutes] = useState<string>("00")
-  const [seconds, setSeconds] = useState<string>("00")
-
-  const [startTime, setStartTime] = useState<number>(0)
-
-  const displayTime = (): void => {
-    const d: Date = new Date(Date.now() - startTime)
-    setHour(String(d.getHours()-1).padStart(2, '0'))
-    setMinutes(String(d.getMinutes()).padStart(2, '0'))
-    setSeconds(String(d.getSeconds()).padStart(2, '0'))
-    setTimeout(displayTime, 1000)
-  }
 
   // useEffect(() => {
   //   const id = setInterval(() => {
@@ -55,10 +35,9 @@ function App() {
 
   return (
     <div className="App">
-      <h1>我慢ズデイ・クロック-世界禁欲時計-テスト</h1>
+      <h1>我慢ズデイ・クロック-世界忍耐時計-テスト</h1>
       {/* <h2>time: { timeStamp }</h2> */}
-      <h2>{hour}:{minutes}:{seconds}</h2>
-      <button onClick={clockToggle}>clock!</button>
+      <Stopwatch />
     </div>
   );
 }
