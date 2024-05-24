@@ -29,6 +29,9 @@ function App() {
   const [minutes, setMinutes] = useState<string>("00")
   const [seconds, setSeconds] = useState<string>("00")
 
+  // setIntervalテスト
+  const [count, setCount] = useState<number>(0)
+
   // setIntervalを使っていると最初の一秒だけ表示されないから初期値に現在の時刻を入れておく
   // const [timeStamp, setTimestamp] = useState<string>(
   //   `${d.getHours().toString()}:${d.getMinutes().toString()}:${d.getSeconds().toString()}`
@@ -39,12 +42,32 @@ function App() {
   const [stopBtn, setStopBtn] = useState<boolean>(true)
   const [resetBtn, setResetBtn] = useState<boolean>(true)
 
+
+  useEffect(() => {
+    const cd = setInterval(() => {
+      // setCount(prevCount => prevCount + 1)
+      const uni = Date.now
+      setTime(uni)
+      const t = new Date(time)
+      setYear(t.getFullYear().toString())
+      setMonth(t.getMonth().toString())
+      setDay(t.getDate().toString())
+      setHour(t.getHours().toString())
+      setMinutes(t.getMinutes().toString())
+      setSeconds(t.getSeconds().toString())
+    }, 1000)
+
+    return () => clearInterval(cd)
+  }, [time])
+
   // スタートしたらカウントを始める
   const clickStart = (): void => {
     // startボタンをクリックした後timeのstateの更新のタイミングがずれていて
     // カウントが上手く行かない
-    const uni = Date.now()
-    setTime(uni)
+    // const uni = Date.now()
+    // console.log("uni = ", uni)
+    // setTime(uni)
+    // console.log("time", time)
     // const d = new Date(time)
     // console.log(d)
     setStartBtn(true)
@@ -69,16 +92,17 @@ function App() {
   const startTime = (): void => {
     console.log("外１")
     setInterval(() => {
-      const t: Date = new Date(time)
-      setYear(t.getFullYear().toString())
-      setMonth(t.getMonth().toString())
-      setDay(t.getDate().toString())
-      setHour(t.getHours().toString())
-      setMinutes(t.getMinutes().toString())
-      setSeconds(t.getSeconds().toString())
-      const tmpTime = time + 1000
-      setTime(tmpTime);
-      console.log("starttime")
+      // const t: Date = new Date(time)
+      // setYear(t.getFullYear().toString())
+      // setMonth(t.getMonth().toString())
+      // setDay(t.getDate().toString())
+      // setHour(t.getHours().toString())
+      // setMinutes(t.getMinutes().toString())
+      // setSeconds(t.getSeconds().toString())
+      // console.log(`${year}年 ${month}月 ${day}日 ${hour}時 ${minutes}分 ${seconds}秒`)
+      // const tmpTime = time + 1000
+      // console.log("tmpTime=", tmpTime)
+      // setTime(tmpTime);
     }, 1000)
     console.log("外２")
   }
@@ -94,10 +118,14 @@ function App() {
   //   return () => clearInterval(id);
   // }, [time])
 
+  const effectTest = (uni: number): string => {
+    return new Date(uni).toString()
+  }
 
   return (
     <div className="App">
       <h1>我慢ズデイ・クロック-世界忍耐時計-テスト</h1>
+      <h2>setIntervalテスト {effectTest(time)}</h2>
       {/* <h2>time: { timeStamp }</h2> */}
       <h2>{year}年 {month}月 {day}日 {hour}時 {minutes}分 {seconds}秒</h2>
       <br />
