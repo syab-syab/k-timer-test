@@ -12,30 +12,23 @@ import './App.css';
 function App() {
   // 例によってUNIX時間の数値を取得する
   // 1秒 = 1000ミリ秒
+  // 1分 = 60000ミリ秒
+  // 1時間 = 3600000ミリ秒
+  // 1日 = 86400000ミリ秒
+  // 1週 = 604800000ミリ秒
+  // 1月(30日) = 2592000000ミリ秒
+  // 1年(暦年) = 31536000000ミリ秒
 
-  // const d: Date = new Date()
-
-  // 現在のunix時間を格納
+  // 経過時間をミリ秒で格納
   const [time, setTime] = useState<number>(0)
 
-  // 念のため
-  // const [date, setDate] = useState<Date>(new Date(time)) 
-
   // 年月日時分秒を
-  const [year, setYear] = useState<string>("00")
-  const [month, setMonth] = useState<string>("00")
-  const [day, setDay] = useState<string>("00")
-  const [hour, setHour] = useState<string>("00")
-  const [minutes, setMinutes] = useState<string>("00")
-  const [seconds, setSeconds] = useState<string>("00")
-
-  // setIntervalテスト
-  const [count, setCount] = useState<number>(0)
-
-  // setIntervalを使っていると最初の一秒だけ表示されないから初期値に現在の時刻を入れておく
-  // const [timeStamp, setTimestamp] = useState<string>(
-  //   `${d.getHours().toString()}:${d.getMinutes().toString()}:${d.getSeconds().toString()}`
-  // )
+  // const [year, setYear] = useState<string>("00")
+  // const [month, setMonth] = useState<string>("00")
+  // const [day, setDay] = useState<string>("00")
+  // const [hour, setHour] = useState<string>("00")
+  // const [minutes, setMinutes] = useState<string>("00")
+  // const [seconds, setSeconds] = useState<string>("00")
 
   // ボタンの状態
   const [startBtn, setStartBtn] = useState<boolean>(false)
@@ -46,15 +39,8 @@ function App() {
   useEffect(() => {
     const cd = setInterval(() => {
       // setCount(prevCount => prevCount + 1)
-      const uni = Date.now
-      setTime(uni)
-      const t = new Date(time)
-      setYear(t.getFullYear().toString())
-      setMonth(t.getMonth().toString())
-      setDay(t.getDate().toString())
-      setHour(t.getHours().toString())
-      setMinutes(t.getMinutes().toString())
-      setSeconds(t.getSeconds().toString())
+      setTime(time+1000)
+
     }, 1000)
 
     return () => clearInterval(cd)
@@ -62,14 +48,6 @@ function App() {
 
   // スタートしたらカウントを始める
   const clickStart = (): void => {
-    // startボタンをクリックした後timeのstateの更新のタイミングがずれていて
-    // カウントが上手く行かない
-    // const uni = Date.now()
-    // console.log("uni = ", uni)
-    // setTime(uni)
-    // console.log("time", time)
-    // const d = new Date(time)
-    // console.log(d)
     setStartBtn(true)
     setStopBtn(false)
     setResetBtn(false)
@@ -107,27 +85,49 @@ function App() {
     console.log("外２")
   }
 
-  // useEffect(() => {
-  //   const id = setInterval(() => {
-  //     const t: Date = new Date(time)
-  //     const realTime: string = `
-  //       ${t.getHours().toString()}:${t.getMinutes().toString()}:${t.getSeconds().toString()}
-  //     `
-  //     setTime(time + 1000);
-  //   }, 1000)
-  //   return () => clearInterval(id);
-  // }, [time])
+  const modifyMilliSeconds = (uni: number, milli: number): Array<number> => {
+    // 渡されたミリ秒(uni)を各時間の単位のミリ秒(milli)で割る
+    const tmp = Math.floor(uni / milli)
+    if (tmp >= 1) {
+      // tmpが1以上の時
+      // 次ここから
+      return [tmp, tmp - uni * milli]
+    } else {
+      return [0, uni]
+    }
+  }
 
-  const effectTest = (uni: number): string => {
-    return new Date(uni).toString()
+  const millisecondsTest = (uni: number): string => {
+    // 渡されたミリ秒を、まず
+    // (年) 31536000000で割って1以下なら0、1以上なら残りを
+    // (月) 2592000000で割って1以下なら0、1以上なら残りを
+    // (週) 604800000で割って1以下なら0、1以上なら残りを
+    // (日) 86400000で割って1以下なら0、1以上なら残りを
+    // (時) 3600000で割って1以下なら0、1以上なら残りを
+    // (分) 60000で割って1以下なら0、1以上なら残りを
+    // (秒) 1000で割る
+    // 残り≠余り
+
+    // 渡されたtimeを各ミリ秒で除算 ex) uni / 31536000000 = x.xxxx
+    // 秒以外で答えが1以上なら余りを四捨五入して対応するミリ秒を乗算し、timeから減算 ex) uni - 31536000000 * x = y
+    // 減算の答えを次に回していく
+
+    // 
+
+    const tmpMinutes: Array<number> | number = modifyMilliSeconds(uni, 60000)
+    const returnMinutes = tmpMinutes[0]
+    // const returnSeconds: number = uni / 1000
+    // 次ここから
+    const returnSeconds: number = tmpMinutes[1] / 1000 
+    return `${returnMinutes}分${returnSeconds.toString()}秒`
   }
 
   return (
     <div className="App">
       <h1>我慢ズデイ・クロック-世界忍耐時計-テスト</h1>
-      <h2>setIntervalテスト {effectTest(time)}</h2>
+      <h2>setIntervalテスト {millisecondsTest(time)}</h2>
       {/* <h2>time: { timeStamp }</h2> */}
-      <h2>{year}年 {month}月 {day}日 {hour}時 {minutes}分 {seconds}秒</h2>
+      {/* <h2>{year}年 {month}月 {day}日 {hour}時 {minutes}分 {seconds}秒</h2> */}
       <br />
       <button onClick={clickStart} disabled={startBtn}>start</button>
       <br />
