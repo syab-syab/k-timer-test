@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 // import logo from './logo.svg';
 import './App.css';
-import Test from './components/Test';
+import Timer from './components/Timer';
 
 // やりたいこと
 // 未来の日付を定める→その日付までのカウントダウンを表示する(目標まであと○○年○○月○○日○○分○○秒みたいな)
@@ -10,139 +10,96 @@ import Test from './components/Test';
 // スタートした時間(a)と目標の時間(b)のそれぞれのunix時間を取得する
 // aに1000ミリ秒を足した数値をnew Date()に入れて日付と時間を表示してそれを1秒ごとに表示する
 
-// サイトを開いたときのミリ秒(開くたびに値を更新していく)
-// コンポーネントの中にあるとレンダリングの度に更新されていくので外で済ませる
-const currentMilliSeconds: number = Date.now()
-const currentMilliKey = "current-milli-seconds"
-localStorage.setItem(currentMilliKey, currentMilliSeconds.toString())
-const currentMilliSecondsVal: number = Number(localStorage.getItem(currentMilliKey))
-console.log("現在", new Date(currentMilliSecondsVal))
 
 function App() {
-
-  // 基準となるミリ秒(0)をローカルに保存
-  const localKey = "timer-test"
+  // ローカル全消し(最終手段だから滅多なことで使わない)
   // localStorage.clear();
+
+  // サイトを開いたときのミリ秒(開くたびに値を更新していく)
+  const currentMilliSeconds: number = Date.now()
+  const currentMilliKey = "current-milli-seconds-test"
+  localStorage.setItem(currentMilliKey, currentMilliSeconds.toString())
+  const currentMilliSecondsVal: number = Number(localStorage.getItem(currentMilliKey))
+  console.log("現在", new Date(currentMilliSecondsVal))
+
+
+  // カウントを開始した時刻(日付)のミリ秒を格納する
+
+
+  // 基準となるカウント済みのミリ秒をローカルに保存
+  const localCountedKey: string = "counted-milli-test"
   // ローカルの値を代入する定数を用意
-  const localVal: string | null = localStorage.getItem(localKey)
+  const localCountedVal: string | null = localStorage.getItem(localCountedKey)
   
   // ローカルの値の存在を確認
-  const localCheck = (valid: string|null): void => {
+  const localCountedCheck = (valid: string | null): void => {
     // 数値の0はfalseと同じ(文字列はtrue)
     if (valid) {
-      // console.log("ローカル有り")
+      console.log("counted有り")
     } else {
-      console.log("ローカル無し")
-      localStorage.setItem(localKey, "0")
+      console.log("counted無し")
+      // もしカウント済みのミリ秒がローカルになければ
+      // 0を格納しておく
+      localStorage.setItem(localCountedKey, "0")
     }
   }
-  localCheck(localVal)
-  // console.log(localVal)
+  localCountedCheck(localCountedVal)
   
 
-  // 経過時間をミリ秒で格納
-  // const [time, setTime] = useState<number>(0)
-  const [time, setTime] = useState<number>(Number(localVal))
-  // 経過したミリ秒の数値をローカル(出来ればindexedDB)に毎秒保存(更新していく)
-  // アプリを閉じて再度立ち上げた際に
-  // ローカルに保存してあるミリ秒をtimeに代入して
-  // 続きをカウントし始める←ここまで出来た
-
-  // 完成形は閉じて再び立ち上げる間の時間も加算してカウントする
-
   // ボタンの状態
-  const [startBtn, setStartBtn] = useState<boolean>(false)
-  const [stopBtn, setStopBtn] = useState<boolean>(true)
-  const [resetBtn, setResetBtn] = useState<boolean>(true)
+  // ローカルにボタンの状態を保存しておく
+  const localStartBooleanKey: string = "local-start-boolean-test"
+  const localStartBooleanval: string | null = localStorage.getItem(localStartBooleanKey)
 
+  const localStartCheck = (valid: string | null): void => {
+    if (valid) {
+      console.log("start有")
+    } else {
+      console.log("start無")
+      localStorage.setItem(localStartBooleanKey, "0")
+    }
+  }
+  localStartCheck(localStartBooleanval)
 
-  // timeの値をトリガーにして毎秒1000ミリ秒を加算していく
-  useEffect(() => {
-    const count = setInterval(() => {
-      setTime(time+1000)
-      // console.log("setInterval[内]でローカルに保存")
-      localStorage.setItem(localKey, time.toString())
-    }, 1000)
+  // 文字列→数値→booleanに変える
+  const [start, setStart] = useState<boolean>(Boolean(Number(localStartBooleanval)))
+  const [reset, setReset] = useState<boolean>(!start)
+  // setStateが要らなくなってしまった問題をどうにかする
 
-    // アプリを開いた際に2度[内]よりも先に表示される
-    // その後は[内]よりも後
-    // console.log("setInterval[外]でローカルに保存")
+  // const startBoolean: boolean = Boolean(Number(localStartBooleanval))
+  // const resetBoolean: boolean = !startBoolean
 
-    // なぜreturn と clearIntervalが必要なのかを後で調べておく
-    return () => clearInterval(count)
-  }, [time])
 
   // スタートしたらカウントを始める
   const clickStart = (): void => {
-    setStartBtn(true)
-    setStopBtn(false)
-    setResetBtn(false)
-  }
-
-  const clickStop = (): void => {
-    setStartBtn(false)
-    setStopBtn(true)
-    setResetBtn(false)
-    alert("本当に止めますか？")
+    setStart(true)
+    localStorage.setItem(localStartBooleanKey, "1")
+    setReset(false)
   }
 
   const clickReset = (): void => {
-    setStartBtn(false)
-    setStopBtn(true)
-    setResetBtn(true)
+    setStart(false)
+    localStorage.setItem(localStartBooleanKey, "0")
+    setReset(true)
+    alert("本当にリセットしますか？")
   }
 
-  const modifyMilliSeconds = (uni: number, milli: number): Array<number> => {
-    // 渡されたミリ秒(uni)を各時間の単位のミリ秒(milli)で割る
-    // const tmp = Math.floor(uni / milli)
-    const tmp = Math.floor(uni / milli)
-    if (tmp >= 1) {
-      // tmpが1以上の時
-      // 次ここから
-      return [tmp, uni - tmp * milli]
-    } else {
-      return [0, uni]
-    }
-  }
-
-  const millisecondsTest = (uni: number): string => {
-    // 渡されたtimeを各ミリ秒で除算 ex) uni / 31536000000 = x.xxxx
-    // 秒以外で答えが1以上なら余りを四捨五入して対応するミリ秒を乗算し、timeから減算 ex) uni - 31536000000 * x = y
-    // 減算の答えを次に回していく
-    
-    // 残り≠余り
-    // (年) 31536000000で割って1以下なら0、1以上なら残りを
-    // (月) 2592000000で割って1以下なら0、1以上なら残りを
-    // (週) 604800000で割って1以下なら0、1以上なら残りを
-    // [年、月、週はやっぱり要らない]
-    // (日) 86400000で割って1以下なら0、1以上なら残りを
-    const tmpDay: Array<number> | number = modifyMilliSeconds(uni, 86400000)
-    const returnDay: number = tmpDay[0]
-    // (時) 3600000で割って1以下なら0、1以上なら残りを
-    // const tmpHour: Array<number> | number = modifyMilliSeconds(uni, 3600000)
-    const tmpHour: Array<number> | number = modifyMilliSeconds(tmpDay[1], 3600000)
-    const returnHour: number = tmpHour[0]
-    // (分) 60000で割って1以下なら0、1以上なら残りを
-    // const tmpMinutes: Array<number> | number = modifyMilliSeconds(uni, 60000)
-    const tmpMinutes: Array<number> | number = modifyMilliSeconds(tmpHour[1], 60000)
-    const returnMinutes: number = tmpMinutes[0]
-    // (秒) 1000で割る
-    const returnSeconds: number = tmpMinutes[1] / 1000 
-    
-    return `${returnDay}日${returnHour}時間${returnMinutes}分${returnSeconds.toString()}秒`
-  }
+  // ボタン関係に無駄があるので後でスッキリさせる
+  // 次はここから
 
   return (
     <div className="App">
       <h1>我慢ズデイ・クロック-世界忍耐時計-テスト</h1>
-      <h2>setIntervalテスト {millisecondsTest(time)}</h2>
+      {/* <h2>setIntervalテスト {millisecondsTest(time)}</h2> */}
+      <Timer
+        start={start}
+        localCountedVal={localCountedVal}
+        localCountedKey={localCountedKey}
+      />
       <br />
-      <button onClick={clickStart} disabled={startBtn}>start</button>
+      <button onClick={clickStart} disabled={start}>start</button>
       <br />
-      <button onClick={clickStop} disabled={stopBtn}>stop</button>
-      <br />
-      <button onClick={clickReset} disabled={resetBtn}>reset</button>
-      <Test />
+      <button onClick={clickReset} disabled={reset}>reset</button>
     </div>
   );
 }
