@@ -87,39 +87,40 @@ function App() {
 
   const modifyMilliSeconds = (uni: number, milli: number): Array<number> => {
     // 渡されたミリ秒(uni)を各時間の単位のミリ秒(milli)で割る
+    // const tmp = Math.floor(uni / milli)
     const tmp = Math.floor(uni / milli)
     if (tmp >= 1) {
       // tmpが1以上の時
       // 次ここから
-      return [tmp, tmp - uni * milli]
+      return [tmp, uni - tmp * milli]
     } else {
       return [0, uni]
     }
   }
 
   const millisecondsTest = (uni: number): string => {
-    // 渡されたミリ秒を、まず
+    // 渡されたtimeを各ミリ秒で除算 ex) uni / 31536000000 = x.xxxx
+    // 秒以外で答えが1以上なら余りを四捨五入して対応するミリ秒を乗算し、timeから減算 ex) uni - 31536000000 * x = y
+    // 減算の答えを次に回していく
+
     // (年) 31536000000で割って1以下なら0、1以上なら残りを
     // (月) 2592000000で割って1以下なら0、1以上なら残りを
     // (週) 604800000で割って1以下なら0、1以上なら残りを
     // (日) 86400000で割って1以下なら0、1以上なら残りを
     // (時) 3600000で割って1以下なら0、1以上なら残りを
+    const tmpHour: Array<number> | number = modifyMilliSeconds(uni, 3600000)
+    const returnHour: number = tmpHour[0]
     // (分) 60000で割って1以下なら0、1以上なら残りを
+    // const tmpMinutes: Array<number> | number = modifyMilliSeconds(uni, 60000)
+    const tmpMinutes: Array<number> | number = modifyMilliSeconds(tmpHour[1], 60000)
+    const returnMinutes: number = tmpMinutes[0]
     // (秒) 1000で割る
+    const returnSeconds: number = tmpMinutes[1] / 1000 
     // 残り≠余り
 
-    // 渡されたtimeを各ミリ秒で除算 ex) uni / 31536000000 = x.xxxx
-    // 秒以外で答えが1以上なら余りを四捨五入して対応するミリ秒を乗算し、timeから減算 ex) uni - 31536000000 * x = y
-    // 減算の答えを次に回していく
 
-    // 
-
-    const tmpMinutes: Array<number> | number = modifyMilliSeconds(uni, 60000)
-    const returnMinutes = tmpMinutes[0]
-    // const returnSeconds: number = uni / 1000
-    // 次ここから
-    const returnSeconds: number = tmpMinutes[1] / 1000 
-    return `${returnMinutes}分${returnSeconds.toString()}秒`
+    
+    return `${returnHour}時間${returnMinutes}分${returnSeconds.toString()}秒`
   }
 
   return (
