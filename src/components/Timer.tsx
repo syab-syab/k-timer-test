@@ -21,6 +21,8 @@ const Timer = (props: Props) => {
 
   // timeの値をトリガーにして毎秒1000ミリ秒を加算していく
   // 次はここから
+  // useEffectのテストとして https://qiita.com/c_hazama/items/59dfc0de28bbf0ae6d31 のコードをパクって
+  // 別コンポーネントに切り分けてstartの真偽値で実行をコントロールしてみる
   useEffect(() => {
     if (props.start) {
       // startがtrueならカウントを始められるようにしたい
