@@ -19,22 +19,56 @@ function App() {
   // 1月(30日) = 2592000000ミリ秒
   // 1年(暦年) = 31536000000ミリ秒
 
+
+  // 基準となるミリ秒(0)をローカルに保存
+  const localKey = "timer-test"
+  // localStorage.clear();
+  // ローカルの値を代入する定数を用意
+  const localVal: string | null = localStorage.getItem(localKey)
+  
+  // ローカルの値の存在を確認
+  const localCheck = (valid: string|null): void => {
+    // 数値の0はfalseと同じ(文字列はtrue)
+    if (valid) {
+      console.log("ローカル有り")
+    } else {
+      console.log("ローカル無し")
+        localStorage.setItem(localKey, "0")
+    }
+  }
+  localCheck(localVal)
+  console.log(localVal)
+  
+
   // 経過時間をミリ秒で格納
-  const [time, setTime] = useState<number>(0)
+  // const [time, setTime] = useState<number>(0)
+  const [time, setTime] = useState<number>(Number(localVal))
+  // 経過したミリ秒の数値をローカル(出来ればindexedDB)に毎秒保存(更新していく)
+  // アプリを閉じて再度立ち上げた際に
+  // ローカルに保存してあるミリ秒をtimeに代入して
+  // 続きをカウントし始める←ここまで出来た
+
+  // 完成形は閉じて再び立ち上げる間の時間も加算してカウントする
 
   // ボタンの状態
   const [startBtn, setStartBtn] = useState<boolean>(false)
   const [stopBtn, setStopBtn] = useState<boolean>(true)
   const [resetBtn, setResetBtn] = useState<boolean>(true)
 
-  // 毎秒timeのunix時間が更新されてるかのテスト
-  // console.log(time)
 
+  // timeの値をトリガーにして毎秒1000ミリ秒を加算していく
   useEffect(() => {
     const count = setInterval(() => {
       setTime(time+1000)
+      // console.log("setInterval[内]でローカルに保存")
+      localStorage.setItem(localKey, time.toString())
     }, 1000)
 
+    // アプリを開いた際に2度[内]よりも先に表示される
+    // その後は[内]よりも後
+    // console.log("setInterval[外]でローカルに保存")
+
+    // なぜreturn と clearIntervalが必要なのかを後で調べておく
     return () => clearInterval(count)
   }, [time])
 
