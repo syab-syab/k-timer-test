@@ -22,28 +22,20 @@ function App() {
   // 経過時間をミリ秒で格納
   const [time, setTime] = useState<number>(0)
 
-  // 年月日時分秒を
-  // const [year, setYear] = useState<string>("00")
-  // const [month, setMonth] = useState<string>("00")
-  // const [day, setDay] = useState<string>("00")
-  // const [hour, setHour] = useState<string>("00")
-  // const [minutes, setMinutes] = useState<string>("00")
-  // const [seconds, setSeconds] = useState<string>("00")
-
   // ボタンの状態
   const [startBtn, setStartBtn] = useState<boolean>(false)
   const [stopBtn, setStopBtn] = useState<boolean>(true)
   const [resetBtn, setResetBtn] = useState<boolean>(true)
 
+  // 毎秒timeのunix時間が更新されてるかのテスト
+  // console.log(time)
 
   useEffect(() => {
-    const cd = setInterval(() => {
-      // setCount(prevCount => prevCount + 1)
+    const count = setInterval(() => {
       setTime(time+1000)
-
     }, 1000)
 
-    return () => clearInterval(cd)
+    return () => clearInterval(count)
   }, [time])
 
   // スタートしたらカウントを始める
@@ -51,38 +43,19 @@ function App() {
     setStartBtn(true)
     setStopBtn(false)
     setResetBtn(false)
-    startTime()
   }
 
   const clickStop = (): void => {
     setStartBtn(false)
     setStopBtn(true)
     setResetBtn(false)
+    alert("本当に止めますか？")
   }
 
   const clickReset = (): void => {
     setStartBtn(false)
     setStopBtn(true)
     setResetBtn(true)
-  }
-
-  // 1秒ずつカウントする関数
-  const startTime = (): void => {
-    console.log("外１")
-    setInterval(() => {
-      // const t: Date = new Date(time)
-      // setYear(t.getFullYear().toString())
-      // setMonth(t.getMonth().toString())
-      // setDay(t.getDate().toString())
-      // setHour(t.getHours().toString())
-      // setMinutes(t.getMinutes().toString())
-      // setSeconds(t.getSeconds().toString())
-      // console.log(`${year}年 ${month}月 ${day}日 ${hour}時 ${minutes}分 ${seconds}秒`)
-      // const tmpTime = time + 1000
-      // console.log("tmpTime=", tmpTime)
-      // setTime(tmpTime);
-    }, 1000)
-    console.log("外２")
   }
 
   const modifyMilliSeconds = (uni: number, milli: number): Array<number> => {
@@ -102,13 +75,18 @@ function App() {
     // 渡されたtimeを各ミリ秒で除算 ex) uni / 31536000000 = x.xxxx
     // 秒以外で答えが1以上なら余りを四捨五入して対応するミリ秒を乗算し、timeから減算 ex) uni - 31536000000 * x = y
     // 減算の答えを次に回していく
-
+    
+    // 残り≠余り
     // (年) 31536000000で割って1以下なら0、1以上なら残りを
     // (月) 2592000000で割って1以下なら0、1以上なら残りを
     // (週) 604800000で割って1以下なら0、1以上なら残りを
+    // [年、月、週はやっぱり要らない]
     // (日) 86400000で割って1以下なら0、1以上なら残りを
+    const tmpDay: Array<number> | number = modifyMilliSeconds(uni, 86400000)
+    const returnDay: number = tmpDay[0]
     // (時) 3600000で割って1以下なら0、1以上なら残りを
-    const tmpHour: Array<number> | number = modifyMilliSeconds(uni, 3600000)
+    // const tmpHour: Array<number> | number = modifyMilliSeconds(uni, 3600000)
+    const tmpHour: Array<number> | number = modifyMilliSeconds(tmpDay[1], 3600000)
     const returnHour: number = tmpHour[0]
     // (分) 60000で割って1以下なら0、1以上なら残りを
     // const tmpMinutes: Array<number> | number = modifyMilliSeconds(uni, 60000)
@@ -116,19 +94,14 @@ function App() {
     const returnMinutes: number = tmpMinutes[0]
     // (秒) 1000で割る
     const returnSeconds: number = tmpMinutes[1] / 1000 
-    // 残り≠余り
-
-
     
-    return `${returnHour}時間${returnMinutes}分${returnSeconds.toString()}秒`
+    return `${returnDay}日${returnHour}時間${returnMinutes}分${returnSeconds.toString()}秒`
   }
 
   return (
     <div className="App">
       <h1>我慢ズデイ・クロック-世界忍耐時計-テスト</h1>
       <h2>setIntervalテスト {millisecondsTest(time)}</h2>
-      {/* <h2>time: { timeStamp }</h2> */}
-      {/* <h2>{year}年 {month}月 {day}日 {hour}時 {minutes}分 {seconds}秒</h2> */}
       <br />
       <button onClick={clickStart} disabled={startBtn}>start</button>
       <br />
