@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 // import logo from './logo.svg';
 import './App.css';
+import Test from './components/Test';
 
 // やりたいこと
 // 未来の日付を定める→その日付までのカウントダウンを表示する(目標まであと○○年○○月○○日○○分○○秒みたいな)
@@ -9,16 +10,15 @@ import './App.css';
 // スタートした時間(a)と目標の時間(b)のそれぞれのunix時間を取得する
 // aに1000ミリ秒を足した数値をnew Date()に入れて日付と時間を表示してそれを1秒ごとに表示する
 
-function App() {
-  // 例によってUNIX時間の数値を取得する
-  // 1秒 = 1000ミリ秒
-  // 1分 = 60000ミリ秒
-  // 1時間 = 3600000ミリ秒
-  // 1日 = 86400000ミリ秒
-  // 1週 = 604800000ミリ秒
-  // 1月(30日) = 2592000000ミリ秒
-  // 1年(暦年) = 31536000000ミリ秒
+// サイトを開いたときのミリ秒(開くたびに値を更新していく)
+// コンポーネントの中にあるとレンダリングの度に更新されていくので外で済ませる
+const currentMilliSeconds: number = Date.now()
+const currentMilliKey = "current-milli-seconds"
+localStorage.setItem(currentMilliKey, currentMilliSeconds.toString())
+const currentMilliSecondsVal: number = Number(localStorage.getItem(currentMilliKey))
+console.log("現在", new Date(currentMilliSecondsVal))
 
+function App() {
 
   // 基準となるミリ秒(0)をローカルに保存
   const localKey = "timer-test"
@@ -30,14 +30,14 @@ function App() {
   const localCheck = (valid: string|null): void => {
     // 数値の0はfalseと同じ(文字列はtrue)
     if (valid) {
-      console.log("ローカル有り")
+      // console.log("ローカル有り")
     } else {
       console.log("ローカル無し")
-        localStorage.setItem(localKey, "0")
+      localStorage.setItem(localKey, "0")
     }
   }
   localCheck(localVal)
-  console.log(localVal)
+  // console.log(localVal)
   
 
   // 経過時間をミリ秒で格納
@@ -142,6 +142,7 @@ function App() {
       <button onClick={clickStop} disabled={stopBtn}>stop</button>
       <br />
       <button onClick={clickReset} disabled={resetBtn}>reset</button>
+      <Test />
     </div>
   );
 }
