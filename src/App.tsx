@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import Timer from './components/Timer';
-import Test from './components/Test';
+// import Test from './components/Test';
+import localSetItem from './functions/localSetItem';
 
 // やりたいこと
 // 未来の日付を定める→その日付までのカウントダウンを表示する(目標まであと○○年○○月○○日○○分○○秒みたいな)
@@ -19,7 +20,7 @@ function App() {
   // サイトを開いたときのミリ秒(開くたびに値を更新していく)
   const currentMilliSeconds: number = Date.now()
   const currentMilliKey = "current-milli-seconds-test"
-  localStorage.setItem(currentMilliKey, currentMilliSeconds.toString())
+  localSetItem(currentMilliKey, currentMilliSeconds.toString())
   const currentMilliSecondsVal: number = Number(localStorage.getItem(currentMilliKey))
   console.log("現在", new Date(currentMilliSecondsVal))
 
@@ -41,7 +42,7 @@ function App() {
       console.log("counted無し")
       // もしカウント済みのミリ秒がローカルになければ
       // 0を格納しておく
-      localStorage.setItem(localCountedKey, "0")
+      localSetItem(localCountedKey, "0")
     }
   }
   localCountedCheck(localCountedVal)
@@ -57,7 +58,7 @@ function App() {
       console.log("start有")
     } else {
       console.log("start無")
-      localStorage.setItem(localStartBooleanKey, "0")
+      localSetItem(localStartBooleanKey, "0")
     }
   }
   localStartCheck(localStartBooleanval)
@@ -67,14 +68,11 @@ function App() {
   const [reset, setReset] = useState<boolean>(!start)
   // setStateが要らなくなってしまった問題をどうにかする
 
-  // const startBoolean: boolean = Boolean(Number(localStartBooleanval))
-  // const resetBoolean: boolean = !startBoolean
-
 
   // スタートしたらカウントを始める
   const clickStart = (): void => {
     setStart(true)
-    localStorage.setItem(localStartBooleanKey, "1")
+    localSetItem(localStartBooleanKey, "1")
     setReset(false)
   }
 
@@ -83,7 +81,7 @@ function App() {
     // 自前でポップアップを用意する
     alert("本当にリセットしますか？")
     setStart(false)
-    localStorage.setItem(localStartBooleanKey, "0")
+    localSetItem(localStartBooleanKey, "0")
     setReset(true)
   }
 
@@ -95,14 +93,14 @@ function App() {
       <h1>我慢ズデイ・クロック-世界忍耐時計-テスト</h1>
       {/* <h2>setIntervalテスト {millisecondsTest(time)}</h2> */}
       <Timer
-        // start={start}
+        start={start}
         localCountedVal={localCountedVal}
         localCountedKey={localCountedKey}
       />
       <br />
-      <Test
+      {/* <Test
         start={start}
-      />
+      /> */}
       <br />
       <button onClick={clickStart} disabled={start}>start</button>
       <br />

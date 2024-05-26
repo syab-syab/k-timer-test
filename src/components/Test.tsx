@@ -28,6 +28,7 @@ const Test = (props: Props) => {
     }
 
     // クリーンアップ処理
+    // return無しだと挙動がおかしくなるから必要
     return () => {
       clearInterval(intervalId);
     };
