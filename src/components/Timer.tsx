@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 
 type Props = {
-  start: boolean,
+  // start: boolean,
   localCountedVal: string | null,
   localCountedKey: string
 }
@@ -24,23 +24,25 @@ const Timer = (props: Props) => {
   // useEffectのテストとして https://qiita.com/c_hazama/items/59dfc0de28bbf0ae6d31 のコードをパクって
   // 別コンポーネントに切り分けてstartの真偽値で実行をコントロールしてみる
   useEffect(() => {
-    if (props.start) {
-      // startがtrueならカウントを始められるようにしたい
-      console.log("スタートしました")
-    } else {
-      // startがfalseなら数値をカウントをリセットして停止状態にしたい
-      console.log("リセットしました")
-    }
+    // if (props.start) {
+    //   console.log("スタートしました")
+    // } else {
+    //   console.log("リセットしました")
+    // }
     const count = setInterval(() => {
       const tmpTime = time + 1000
       localStorage.setItem(props.localCountedKey, tmpTime.toString())
       setTime(tmpTime)
     }, 1000)
-  
+
     // なぜreturn と clearIntervalが必要なのかを後で調べておく
     return () => clearInterval(count)
     // 依存配列にprops.localKeyとprops.startを追加しないと警告が出る(エラーではない)
-  }, [time, props.localCountedKey, props.start])
+  }, [
+    time,
+    props.localCountedKey,
+    // props.start
+  ])
 
   const modifyMilliSeconds = (unix: number, milliSec: number): Array<number> => {
     // 渡されたミリ秒(unix)を各時間の単位のミリ秒(milliSec)で割る
@@ -53,12 +55,12 @@ const Timer = (props: Props) => {
       return [0, unix]
     }
   }
-  
+
   const millisecondsTest = (uni: number): string => {
     // 渡されたtimeを各ミリ秒で除算 ex) uni / 31536000000 = x.xxxx
     // 秒以外で答えが1以上なら余りを四捨五入して対応するミリ秒を乗算し、timeから減算 ex) uni - 31536000000 * x = y
     // 減算の答えを次に回していく
-    
+
     // 残り≠余り
     // (年) 31536000000で割って1以下なら0、1以上なら残りを
     // (月) 2592000000で割って1以下なら0、1以上なら残りを
@@ -75,7 +77,7 @@ const Timer = (props: Props) => {
     const returnMinutes: number = tmpMinutes[0]
     // (秒) 1000で割る
     const returnSeconds: number = tmpMinutes[1] / 1000 
-    
+
     return `${returnDay}日${returnHour}時間${returnMinutes}分${returnSeconds.toString()}秒`
   }
 

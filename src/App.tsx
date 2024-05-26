@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 // import logo from './logo.svg';
 import './App.css';
 import Timer from './components/Timer';
+import Test from './components/Test';
 
 // やりたいこと
 // 未来の日付を定める→その日付までのカウントダウンを表示する(目標まであと○○年○○月○○日○○分○○秒みたいな)
@@ -92,9 +93,13 @@ function App() {
       <h1>我慢ズデイ・クロック-世界忍耐時計-テスト</h1>
       {/* <h2>setIntervalテスト {millisecondsTest(time)}</h2> */}
       <Timer
-        start={start}
+        // start={start}
         localCountedVal={localCountedVal}
         localCountedKey={localCountedKey}
+      />
+      <br />
+      <Test
+        start={start}
       />
       <br />
       <button onClick={clickStart} disabled={start}>start</button>
