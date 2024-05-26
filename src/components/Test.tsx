@@ -15,16 +15,19 @@ const Test = (props: Props) => {
   const [time, setTime] = useState(60)
 
   useEffect(() => {
+    // セットアップ処理
     const intervalId: NodeJS.Timer = setInterval(() => 
       time === 0 ? clearInterval(intervalId) : setTime(time - 1)
     , 1000);
-    if (props.start) {
-      console.log("スタートしました")
-    } else {
+    if (!props.start) {
+      // startがfalseなら clearInterval()で止める
+      // その後timeを初期値に戻す
       console.log("リセットしました")
       clearInterval(intervalId)
       setTime(60)
     }
+
+    // クリーンアップ処理
     return () => {
       clearInterval(intervalId);
     };

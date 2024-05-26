@@ -79,10 +79,12 @@ function App() {
   }
 
   const clickReset = (): void => {
+    // たぶんalertやconfirmを使うとカウントが途中で止まるので
+    // 自前でポップアップを用意する
+    alert("本当にリセットしますか？")
     setStart(false)
     localStorage.setItem(localStartBooleanKey, "0")
     setReset(true)
-    alert("本当にリセットしますか？")
   }
 
   // ボタン関係に無駄があるので後でスッキリさせる
