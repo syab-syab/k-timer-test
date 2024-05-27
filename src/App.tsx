@@ -28,23 +28,6 @@ function App() {
   console.log("現在", new Date(currentMilliSecondsVal))
 
 
-  // 基準となるカウント済みのミリ秒をローカルに保存
-  const localCountedKey: string = "counted-milli-test"
-  // ローカルの値を代入する定数を用意
-  const localCountedVal: string | null = localStorage.getItem(localCountedKey)
-  // ローカルの値の存在を確認
-  const localCountedCheck = (valid: string | null): void => {
-    // 数値の0はfalseと同じ(文字列はtrue)
-    if (valid) {
-      console.log("counted有り")
-    } else {
-      console.log("counted無し")
-      // もしカウント済みのミリ秒がローカルになければ
-      // 0を格納しておく
-      localSetItem(localCountedKey, "0")
-    }
-  }
-  localCountedCheck(localCountedVal)
   
   
   // カウントを開始した時刻(日付)のミリ秒を格納する
@@ -107,16 +90,45 @@ function App() {
     localSetItem(countStartMilliKey, "0")
     setReset(true)
   }
-
-  // 最後に開いたのは5月27日18時11分
-  // ミリ秒の下3桁を000にしないと小数点が付くっぽい
-  // const countStartVal = localStorage.getItem(countStartMilliKey)
-  console.log("現在のミリ秒 : ", currentMilliSecondsVal)
-  console.log("スタート時のミリ秒 : ", countStartMilliSeconds)
-  console.log(millisecondsTest(Number(currentMilliSeconds) - Number(countStartMilliSeconds)))
-
   // ボタン関係に無駄があるので後でスッキリさせる
-  // 次はここから
+
+  
+  // 現在のミリ秒とスタート時のミリ秒
+  // ミリ秒の下3桁を000にしないと小数点が付くっぽい
+  const tmpCurrent: number = Number(currentMilliSecondsVal)
+  const tmpStart: number = Number(countStartMilliSeconds)
+  console.log("現在の方が開始時より大きい", tmpCurrent > tmpStart)
+  console.log("その差は", tmpCurrent - tmpStart)
+  console.log(millisecondsTest(tmpCurrent - tmpStart))
+
+  
+  // 基準となるカウント済みのミリ秒をローカルに保存
+  const localCountedKey: string = "counted-milli-test"
+  // ローカルの値を代入する定数を用意(これいらないかも)
+  let localCountedVal: string | null = localStorage.getItem(localCountedKey)
+  // ローカルの値の存在を確認
+  const localCountedCheck = (valid: string | null): void => {
+    // 数値の0はfalseと同じ(文字列はtrue)
+    if (valid) {
+      console.log("counted有り")
+      if(tmpCurrent > tmpStart) {
+        // const tmpLocalCount: number = Number(localCountedVal)
+        // 10秒の時点で落としたから次はXX:X9に開く
+        const currentStartDiff: string = String(tmpCurrent - tmpStart)
+        localSetItem(localCountedKey, currentStartDiff)
+        localCountedVal = currentStartDiff
+      }
+    } else {
+      console.log("counted無し")
+      // もしカウント済みのミリ秒がローカルに無ければ
+      // 0を格納しておく
+      localSetItem(localCountedKey, "0")
+    }
+  }
+  localCountedCheck(localCountedVal)
+  console.log("localCountedVal = ", localCountedVal)
+
+  // 3：13で14分00秒の時点で落とした
 
   return (
     <div className="App">
