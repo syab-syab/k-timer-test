@@ -136,7 +136,7 @@ function App() {
   // 目標の期限設定
   const localDedlineKey: string = "dedline-test"
   // いずれは自由に選択できるようにするけどひとまず固定
-  const tmpDedlineMilliSec: number = new Date(2024, 5, 28, 5, 15).getTime()
+  const tmpDedlineMilliSec: number = new Date(2024, 4, 28, 5, 22).getTime()
   localSetItem(localDedlineKey, tmpDedlineMilliSec.toString())
   const deadLineMilliSec: number = Number(localStorage.getItem(localDedlineKey))
   // 何の数値を期限と比較すればいいのかは次にやる
@@ -148,7 +148,9 @@ function App() {
 
   // これだとリアルタイムで更新できないから
   // 本番ではstateの値で比較する
-  console.log("カウント済みのミリ秒 > (デッドライン - スタート開始ミリ秒)", (tmpCurrent - tmpStart) > (deadLineMilliSec - tmpStart))
+  // console.log("カウント済みのミリ秒", (tmpCurrent - tmpStart))
+  // console.log("(デッドライン - スタート開始ミリ秒)", (deadLineMilliSec - tmpStart))
+  console.log("カウント済みのミリ秒 > (デッドライン - スタート開始ミリ秒)", (tmpCurrent - tmpStart) >= (deadLineMilliSec - tmpStart))
 
   return (
     <div className="App">
