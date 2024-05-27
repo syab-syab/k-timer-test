@@ -14,6 +14,7 @@ const Timer = (props: Props) => {
   // 経過時間をミリ秒で格納
   // const [time, setTime] = useState<number>(0)
   const [time, setTime] = useState<number>(Number(props.localCountedVal))
+  // const [time, setTime] = useState<number>(Number(localStorage.getItem(props.localCountedKey)))
   // 経過したミリ秒の数値をローカル(出来ればindexedDB)に毎秒保存(更新していく)
   // アプリを閉じて再度立ち上げた際に
   // ローカルに保存してあるミリ秒をtimeに代入して

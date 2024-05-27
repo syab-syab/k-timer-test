@@ -32,11 +32,8 @@ const millisecondsTest = (uni: number): string => {
   // (秒) 1000で割る
   const returnSeconds: number = tmpMinutes[1] / 1000 
 
-  return `
-      ${returnDay.toString().padStart( 2, '0')}日
-      ${returnHour.toString().padStart( 2, '0')}時間
-      ${returnMinutes.toString().padStart( 2, '0')}分
-      ${returnSeconds.toString().padStart( 2, '0')}秒
+  // .toString().padStart( 2, '0')
+  return `${returnDay}日${returnHour}時間${returnMinutes}分${returnSeconds.toString()}秒
     `
 }
 
