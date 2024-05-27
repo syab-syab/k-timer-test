@@ -4,6 +4,7 @@ import './App.css';
 import Timer from './components/Timer';
 // import Test from './components/Test';
 import localSetItem from './functions/localSetItem';
+import millisecondsTest from './functions/millisecondsTest';
 
 // やりたいこと
 // 未来の日付を定める→その日付までのカウントダウンを表示する(目標まであと○○年○○月○○日○○分○○秒みたいな)
@@ -25,14 +26,10 @@ function App() {
   console.log("現在", new Date(currentMilliSecondsVal))
 
 
-  // カウントを開始した時刻(日付)のミリ秒を格納する
-
-
   // 基準となるカウント済みのミリ秒をローカルに保存
   const localCountedKey: string = "counted-milli-test"
   // ローカルの値を代入する定数を用意
   const localCountedVal: string | null = localStorage.getItem(localCountedKey)
-  
   // ローカルの値の存在を確認
   const localCountedCheck = (valid: string | null): void => {
     // 数値の0はfalseと同じ(文字列はtrue)
@@ -45,23 +42,45 @@ function App() {
       localSetItem(localCountedKey, "0")
     }
   }
+
+  // 最後に開いたのは5月27日18時11分
   localCountedCheck(localCountedVal)
   
+  
+  // カウントを開始した時刻(日付)のミリ秒を格納する
+  const countStartMilliKey = "count-start-milli-seconds-test"
+  // カウント開始時のミリ秒を格納する定数を用意
+  const countStartMilliSeconds: string | null = localStorage.getItem(countStartMilliKey)
+  // ローカルに開始ミリ秒の値があるか存在を確認
+  // const localStartCheck = (valid: string | null): void => {
+  //   if (valid) {
+  //     console.log("start値有り")
+  //   } else {
+  //     console.log("start値無し")
+  //     localSetItem(countStartMilliKey, String(Date.now()))
+  //   }
+  // }
+
+  console.log(millisecondsTest(Number(currentMilliSeconds) - Number(countStartMilliSeconds)))
 
   // ボタンの状態
   // ローカルにボタンの状態を保存しておく
   const localStartBooleanKey: string = "local-start-boolean-test"
   const localStartBooleanval: string | null = localStorage.getItem(localStartBooleanKey)
 
-  const localStartCheck = (valid: string | null): void => {
+  const localBoolCheck = (valid: string | null): void => {
     if (valid) {
       console.log("start有")
+      // start有りでなおかつカウント開始時の値が無い場合は現在のミリ秒を代入
+      // localStartCheck(countStartMilliSeconds)
     } else {
       console.log("start無")
       localSetItem(localStartBooleanKey, "0")
+      // リセットが押されたら開始時のミリ秒も0にする
+      // localSetItem(countStartMilliKey, "0")
     }
   }
-  localStartCheck(localStartBooleanval)
+  localBoolCheck(localStartBooleanval)
 
   // 文字列→数値→booleanに変える
   const [start, setStart] = useState<boolean>(Boolean(Number(localStartBooleanval)))
@@ -73,6 +92,9 @@ function App() {
   const clickStart = (): void => {
     setStart(true)
     localSetItem(localStartBooleanKey, "1")
+    // start有りでなおかつカウント開始時の値が無い場合は現在のミリ秒を代入
+    // localStartCheck(countStartMilliSeconds)
+    localSetItem(countStartMilliKey, String(Date.now()))
     setReset(false)
   }
 
@@ -82,6 +104,8 @@ function App() {
     alert("本当にリセットしますか？")
     setStart(false)
     localSetItem(localStartBooleanKey, "0")
+    // リセットが押されたら開始時のミリ秒も0にする
+    localSetItem(countStartMilliKey, "0")
     setReset(true)
   }
 
