@@ -32,7 +32,7 @@ const millisecondsTest = (uni: number): string => {
   // (秒) 1000で割る
   const returnSeconds: number = tmpMinutes[1] / 1000 
 
-  // .toString().padStart( 2, '0')
+  // .toString().padStart( 2, '0')を付けなければ表示が遅れないっぽい
   return `${returnDay}日${returnHour}時間${returnMinutes}分${returnSeconds.toString()}秒
     `
 }

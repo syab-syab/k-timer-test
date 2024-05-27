@@ -6,6 +6,7 @@ import Timer from './components/Timer';
 import localSetItem from './functions/localSetItem';
 // import millisecondsTest from './functions/millisecondsTest';
 import milliSecEdit from './functions/milliSecEdit';
+import DeadlineCheck from './components/DeadlineCheck';
 
 // やりたいこと
 // 未来の日付を定める→その日付までのカウントダウンを表示する(目標まであと○○年○○月○○日○○分○○秒みたいな)
@@ -123,13 +124,31 @@ function App() {
     }
   }
   localCountedCheck(localCountedVal)
-  console.log("localCountedVal = ", localCountedVal)
+  // console.log("localCountedVal = ", localCountedVal)
 
   // 2分45秒あたりから2秒ほど遅れがあるかも
   // 3分18秒あたりだと2秒どころか5秒以上も
   // ただし一度閉じて再度開くと直る
   // 再読み込みでも直る
   // ロジックは間違っていないっぽい
+
+
+  // 目標の期限設定
+  const localDedlineKey: string = "dedline-test"
+  // いずれは自由に選択できるようにするけどひとまず固定
+  const tmpDedlineMilliSec: number = new Date(2024, 5, 28, 5, 15).getTime()
+  localSetItem(localDedlineKey, tmpDedlineMilliSec.toString())
+  const deadLineMilliSec: number = Number(localStorage.getItem(localDedlineKey))
+  // 何の数値を期限と比較すればいいのかは次にやる
+  // (デッドライン - スタート開始ミリ秒) > (現在のミリ秒 - スタート開始ミリ秒) という感じか
+  // (デッドライン - スタート開始ミリ秒) > カウント済みのミリ秒
+  // console.log("deadline = ", deadLineMilliSec)
+  // console.log("スタートミリ秒 = ", tmpStart)
+  // console.log("デッドライン - スタート開始ミリ秒", deadLineMilliSec - tmpStart)
+
+  // これだとリアルタイムで更新できないから
+  // 本番ではstateの値で比較する
+  console.log("カウント済みのミリ秒 > (デッドライン - スタート開始ミリ秒)", (tmpCurrent - tmpStart) > (deadLineMilliSec - tmpStart))
 
   return (
     <div className="App">
@@ -147,6 +166,11 @@ function App() {
       <button onClick={clickStart} disabled={start}>start</button>
       <br />
       <button onClick={clickReset} disabled={reset}>reset</button>
+      <DeadlineCheck
+        deadline={deadLineMilliSec - tmpStart}
+        // とりあえず現在時間を入れておく(後で変える)
+        tmp={tmpCurrent - tmpStart}
+        />
     </div>
   );
 }
