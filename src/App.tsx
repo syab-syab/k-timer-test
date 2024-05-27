@@ -5,6 +5,7 @@ import Timer from './components/Timer';
 // import Test from './components/Test';
 import localSetItem from './functions/localSetItem';
 import millisecondsTest from './functions/millisecondsTest';
+import milliSecEdit from './functions/milliSecEdit';
 
 // やりたいこと
 // 未来の日付を定める→その日付までのカウントダウンを表示する(目標まであと○○年○○月○○日○○分○○秒みたいな)
@@ -21,7 +22,8 @@ function App() {
   // サイトを開いたときのミリ秒(開くたびに値を更新していく)
   const currentMilliSeconds: number = Date.now()
   const currentMilliKey = "current-milli-seconds-test"
-  localSetItem(currentMilliKey, currentMilliSeconds.toString())
+  // 取得したミリ秒の下三桁を000に直してからローカルへ格納
+  localSetItem(currentMilliKey, milliSecEdit(currentMilliSeconds.toString()))
   const currentMilliSecondsVal: number = Number(localStorage.getItem(currentMilliKey))
   console.log("現在", new Date(currentMilliSecondsVal))
 
@@ -59,10 +61,6 @@ function App() {
   //   }
   // }
 
-  // 最後に開いたのは5月27日18時11分
-  console.log("現在のミリ秒 : ", Number(currentMilliSeconds))
-  console.log("スタート時のミリ秒 : ", Number(countStartMilliSeconds))
-  console.log(millisecondsTest(Number(currentMilliSeconds) - Number(countStartMilliSeconds)))
 
   // ボタンの状態
   // ローカルにボタンの状態を保存しておく
@@ -95,7 +93,7 @@ function App() {
     localSetItem(localStartBooleanKey, "1")
     // start有りでなおかつカウント開始時の値が無い場合は現在のミリ秒を代入
     // localStartCheck(countStartMilliSeconds)
-    localSetItem(countStartMilliKey, String(Date.now()))
+    localSetItem(countStartMilliKey, milliSecEdit(String(Date.now())))
     setReset(false)
   }
 
@@ -109,6 +107,13 @@ function App() {
     localSetItem(countStartMilliKey, "0")
     setReset(true)
   }
+
+  // 最後に開いたのは5月27日18時11分
+  // ミリ秒の下3桁を000にしないと小数点が付くっぽい
+  // const countStartVal = localStorage.getItem(countStartMilliKey)
+  console.log("現在のミリ秒 : ", currentMilliSecondsVal)
+  console.log("スタート時のミリ秒 : ", countStartMilliSeconds)
+  console.log(millisecondsTest(Number(currentMilliSeconds) - Number(countStartMilliSeconds)))
 
   // ボタン関係に無駄があるので後でスッキリさせる
   // 次はここから
