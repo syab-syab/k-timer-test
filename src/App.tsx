@@ -42,8 +42,6 @@ function App() {
       localSetItem(localCountedKey, "0")
     }
   }
-
-  // 最後に開いたのは5月27日18時11分
   localCountedCheck(localCountedVal)
   
   
@@ -61,6 +59,9 @@ function App() {
   //   }
   // }
 
+  // 最後に開いたのは5月27日18時11分
+  console.log("現在のミリ秒 : ", Number(currentMilliSeconds))
+  console.log("スタート時のミリ秒 : ", Number(countStartMilliSeconds))
   console.log(millisecondsTest(Number(currentMilliSeconds) - Number(countStartMilliSeconds)))
 
   // ボタンの状態
