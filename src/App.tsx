@@ -111,7 +111,6 @@ function App() {
     if (valid) {
       // console.log("counted有り")
       if(tmpCurrent > tmpStart) {
-        // 10秒の時点で落としたから次はXX:X9に開く
         const currentStartDiff: string = String(tmpCurrent - tmpStart)
         localSetItem(localCountedKey, currentStartDiff)
         localCountedVal = currentStartDiff
@@ -135,10 +134,52 @@ function App() {
 
   // 目標の期限設定
   const localDedlineKey: string = "dedline-test"
+  // 単位を乗算する前の数値(〇時間, 〇日)
+  const localDeadLineOriginKey: string = "dedline-origin-test"
   // いずれは自由に選択できるようにするけどひとまず固定
-  const tmpDedlineMilliSec: number = new Date(2024, 4, 28, 5, 22).getTime()
-  localSetItem(localDedlineKey, tmpDedlineMilliSec.toString())
-  const deadLineMilliSec: number = Number(localStorage.getItem(localDedlineKey))
+  // const tmpDedlineMilliSec: number = new Date(2024, 4, 28, 5, 22).getTime()
+
+  // 実際の期限設定
+  // state使う必要無いかも
+  const localDeadLineOrigin: string | null = localStorage.getItem(localDeadLineOriginKey)
+  // ローカルに期限のミリ秒が存在するかチェック
+  const localDeadLineCheck = (valid: string | null): void => {
+    // 数値の0はfalseと同じ(文字列はtrue)
+    if (valid) {
+      console.log("deadLine有り")
+    } else {
+      console.log("deadLine無し")
+      // もし期限のミリ秒がローカルに無ければ
+      // 0を格納しておく
+      localSetItem(localDeadLineOriginKey, "0")
+    }
+  }
+  localDeadLineCheck(localDeadLineOrigin)
+  // 期限のstate
+  const [deadLine, setDeadLine] = useState<number>(Number(localDeadLineOrigin))
+
+  const changeDeadLine = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const tmp: number = Number(e.target.value)
+    setDeadLine(tmp)
+  }
+  console.log("期限 = ", deadLine)
+  // いずれ日(86400000ミリ秒単位)に直す↓
+  console.log("期限ミリ秒(hour) = ", tmpStart + (deadLine * 3600000))
+  // 設定した期限ミリ秒をスタートしたミリ秒に加算して期限(dedline-test)としてローカルに格納
+  // ↓みたいな感じ、多分
+  // localSetItem(localDedlineKey, (tmpStart + (deadLine * 86400000)).toString())
+  const clickDeadLineDecide = (): void => {
+    // テスト環境で日では長いので時間を使う
+    localSetItem(localDeadLineOriginKey, deadLine.toString())
+    // ここで初めて乗算したミリ秒の期限を格納
+    localSetItem(localDedlineKey, (tmpStart + (deadLine * 3600000)).toString())
+  }
+  // テスト環境で日では長いので時間を使う
+  // localSetItem(localDeadLineOriginKey, deadLine.toString())
+  // ここで初めて乗算したミリ秒の期限を格納
+  // localSetItem(localDedlineKey, (tmpStart + (deadLine * 3600000)).toString())
+  const localDeadLine: number = Number(localStorage.getItem(localDedlineKey))
+  
   // 何の数値を期限と比較すればいいのかは次にやる
   // (デッドライン - スタート開始ミリ秒) > (現在のミリ秒 - スタート開始ミリ秒) という感じか
   // (デッドライン - スタート開始ミリ秒) > カウント済みのミリ秒
@@ -148,9 +189,7 @@ function App() {
 
   // これだとリアルタイムで更新できないから
   // 本番ではstateの値で比較する
-  // console.log("カウント済みのミリ秒", (tmpCurrent - tmpStart))
-  // console.log("(デッドライン - スタート開始ミリ秒)", (deadLineMilliSec - tmpStart))
-  console.log("カウント済みのミリ秒 > (デッドライン - スタート開始ミリ秒)", (tmpCurrent - tmpStart) >= (deadLineMilliSec - tmpStart))
+  console.log("カウント済みのミリ秒 > (デッドライン - スタート開始ミリ秒)", (tmpCurrent - tmpStart) >= (localDeadLine - tmpStart))
 
   return (
     <div className="App">
@@ -169,10 +208,17 @@ function App() {
       <br />
       <button onClick={clickReset} disabled={reset}>reset</button>
       <DeadlineCheck
-        deadline={deadLineMilliSec - tmpStart}
+        deadline={localDeadLine - tmpStart}
         // とりあえず現在時間を入れておく(後で変える)
         tmp={tmpCurrent - tmpStart}
-        />
+      />
+      <hr />
+      <div>
+        何時間耐える？
+        <input type='number' value={deadLine} onChange={(e) => changeDeadLine(e)}/>
+        {/* 本番ではstartのボタンを押したときに設定するようにする */}
+        <button onClick={clickDeadLineDecide}>設定</button>
+      </div>
     </div>
   );
 }
