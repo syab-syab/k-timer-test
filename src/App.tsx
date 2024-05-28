@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-// import logo from './logo.svg';
 import './App.css';
 import Timer from './components/Timer';
-// import Test from './components/Test';
 import localSetItem from './functions/localSetItem';
-// import millisecondsTest from './functions/millisecondsTest';
 import milliSecEdit from './functions/milliSecEdit';
 import DeadlineCheck from './components/DeadlineCheck';
 
@@ -26,23 +23,12 @@ function App() {
   // 取得したミリ秒の下三桁を000に直してからローカルへ格納
   localSetItem(currentMilliKey, milliSecEdit(currentMilliSeconds.toString()))
   const currentMilliSecondsVal: number = Number(localStorage.getItem(currentMilliKey))
-  // console.log("現在", new Date(currentMilliSecondsVal))
 
   
   // カウントを開始した時刻(日付)のミリ秒を格納する
   const countStartMilliKey = "count-start-milli-seconds-test"
   // カウント開始時のミリ秒を格納する定数を用意
   const countStartMilliSeconds: string | null = localStorage.getItem(countStartMilliKey)
-  // ローカルに開始ミリ秒の値があるか存在を確認
-  // const localStartCheck = (valid: string | null): void => {
-  //   if (valid) {
-  //     console.log("start値有り")
-  //   } else {
-  //     console.log("start値無し")
-  //     localSetItem(countStartMilliKey, String(Date.now()))
-  //   }
-  // }
-
 
   // ボタンの状態
   // ローカルにボタンの状態を保存しておく
@@ -75,9 +61,9 @@ function App() {
     setStart(true)
     localSetItem(localStartBooleanKey, "1")
     // start有りでなおかつカウント開始時の値が無い場合は現在のミリ秒を代入
-    // localStartCheck(countStartMilliSeconds)
     localSetItem(countStartMilliKey, milliSecEdit(String(Date.now())))
     setReset(false)
+    // 期限の設定ボタンを押したときの処理もここに追加する
   }
 
   const clickReset = (): void => {
@@ -89,6 +75,7 @@ function App() {
     // リセットが押されたら開始時のミリ秒も0にする
     localSetItem(countStartMilliKey, "0")
     setReset(true)
+    // 期限のリセットもここで行う
   }
   // ボタン関係に無駄があるので後でスッキリさせる
 
@@ -123,24 +110,13 @@ function App() {
     }
   }
   localCountedCheck(localCountedVal)
-  // console.log("localCountedVal = ", localCountedVal)
-
-  // 2分45秒あたりから2秒ほど遅れがあるかも
-  // 3分18秒あたりだと2秒どころか5秒以上も
-  // ただし一度閉じて再度開くと直る
-  // 再読み込みでも直る
-  // ロジックは間違っていないっぽい
 
 
   // 目標の期限設定
   const localDedlineKey: string = "dedline-test"
   // 単位を乗算する前の数値(〇時間, 〇日)
   const localDeadLineOriginKey: string = "dedline-origin-test"
-  // いずれは自由に選択できるようにするけどひとまず固定
-  // const tmpDedlineMilliSec: number = new Date(2024, 4, 28, 5, 22).getTime()
-
-  // 実際の期限設定
-  // state使う必要無いかも
+  // ミリ秒に乗算するための日の単位
   const localDeadLineOrigin: string | null = localStorage.getItem(localDeadLineOriginKey)
   // ローカルに期限のミリ秒が存在するかチェック
   const localDeadLineCheck = (valid: string | null): void => {
@@ -165,28 +141,21 @@ function App() {
   console.log("期限 = ", deadLine)
   // いずれ日(86400000ミリ秒単位)に直す↓
   console.log("期限ミリ秒(hour) = ", tmpStart + (deadLine * 3600000))
+  console.log("期限ミリ秒(day) = ", tmpStart + (deadLine * 86400000))
   // 設定した期限ミリ秒をスタートしたミリ秒に加算して期限(dedline-test)としてローカルに格納
-  // ↓みたいな感じ、多分
-  // localSetItem(localDedlineKey, (tmpStart + (deadLine * 86400000)).toString())
   const clickDeadLineDecide = (): void => {
     // テスト環境で日では長いので時間を使う
     localSetItem(localDeadLineOriginKey, deadLine.toString())
     // ここで初めて乗算したミリ秒の期限を格納
-    localSetItem(localDedlineKey, (tmpStart + (deadLine * 3600000)).toString())
+    // tmpStartの値はカウントが始まらないと格納されないから本番では直す
+    // それか設定ボタンを排除してstartボタンがlickされた時に↓の処理をする
+    localSetItem(localDedlineKey, (tmpStart + (deadLine * 86400000)).toString())
   }
-  // テスト環境で日では長いので時間を使う
-  // localSetItem(localDeadLineOriginKey, deadLine.toString())
-  // ここで初めて乗算したミリ秒の期限を格納
-  // localSetItem(localDedlineKey, (tmpStart + (deadLine * 3600000)).toString())
+  // 下で使うので期限のローカル値を取得して数値に直す
   const localDeadLine: number = Number(localStorage.getItem(localDedlineKey))
   
-  // 何の数値を期限と比較すればいいのかは次にやる
-  // (デッドライン - スタート開始ミリ秒) > (現在のミリ秒 - スタート開始ミリ秒) という感じか
-  // (デッドライン - スタート開始ミリ秒) > カウント済みのミリ秒
-  // console.log("deadline = ", deadLineMilliSec)
-  // console.log("スタートミリ秒 = ", tmpStart)
-  // console.log("デッドライン - スタート開始ミリ秒", deadLineMilliSec - tmpStart)
 
+  // カウント済みのミリ秒 > (デッドライン - スタート開始ミリ秒)で期限を過ぎたことになる
   // これだとリアルタイムで更新できないから
   // 本番ではstateの値で比較する
   console.log("カウント済みのミリ秒 > (デッドライン - スタート開始ミリ秒)", (tmpCurrent - tmpStart) >= (localDeadLine - tmpStart))
@@ -200,10 +169,8 @@ function App() {
         localCountedKey={localCountedKey}
       />
       <br />
-      {/* <Test
-        start={start}
-      /> */}
       <br />
+      {/* 下の設定ボタンの役割をstartボタンに移す */}
       <button onClick={clickStart} disabled={start}>start</button>
       <br />
       <button onClick={clickReset} disabled={reset}>reset</button>
