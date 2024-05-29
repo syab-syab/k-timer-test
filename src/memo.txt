@@ -1,0 +1,25 @@
+ローカルストレージのキー
+App.tsx
+・サイトを開いたときのミリ秒(開くたびに値を更新していく)
+  "current-milli-seconds-test"
+  currentMilliKey
+
+・カウントを開始した時刻(日付)のミリ秒を格納する
+  "count-start-milli-seconds-test"
+  countStartMilliKey
+
+・ボタンの状態("1"がtrueで"0"がfalse)
+  "local-start-boolean-test"
+  localStartBooleanKey
+
+・カウント済みのミリ秒(これだけTimer.tsxで使用)
+  "counted-milli-test"
+  localCountedKey
+
+・目標の期限(ミリ秒)
+  "dedline-test"
+  localDedlineKey
+
+・目標の日数(〇時間, 〇日) - この数値に乗算して↑のdeadline-testの値を出す
+  "dedline-origin-test"
+  localDeadLineOriginKey

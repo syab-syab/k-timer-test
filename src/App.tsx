@@ -4,6 +4,7 @@ import Timer from './components/Timer';
 import localSetItem from './functions/localSetItem';
 import milliSecEdit from './functions/milliSecEdit';
 import DeadlineCheck from './components/DeadlineCheck';
+import DexieTest from './components/DexieTest';
 
 // やりたいこと
 // 未来の日付を定める→その日付までのカウントダウンを表示する(目標まであと○○年○○月○○日○○分○○秒みたいな)
@@ -114,7 +115,8 @@ function App() {
 
   // 目標の期限設定
   const localDedlineKey: string = "dedline-test"
-  // 単位を乗算する前の数値(〇時間, 〇日)
+  // 目標の日数(〇時間, 〇日)
+  // この数値に乗算して↑のdeadline-testの値を出す
   const localDeadLineOriginKey: string = "dedline-origin-test"
   // ミリ秒に乗算するための日の単位
   const localDeadLineOrigin: string | null = localStorage.getItem(localDeadLineOriginKey)
@@ -186,6 +188,8 @@ function App() {
         {/* 本番ではstartのボタンを押したときに設定するようにする */}
         <button onClick={clickDeadLineDecide}>設定</button>
       </div>
+      <hr />
+      <DexieTest />
     </div>
   );
 }
