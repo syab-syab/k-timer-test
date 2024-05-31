@@ -90,6 +90,7 @@ function App() {
   // console.log(millisecondsTest(tmpCurrent - tmpStart))
   
   // 基準となるカウント済みのミリ秒をローカルに保存
+  // カウントが始まればTimer.tsxで更新される値
   const localCountedKey: string = "counted-milli-test"
   // ローカルの値を代入する定数を用意(これいらないかも)
   let localCountedVal: string | null = localStorage.getItem(localCountedKey)

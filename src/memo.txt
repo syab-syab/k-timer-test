@@ -3,6 +3,7 @@ App.tsx
 ・サイトを開いたときのミリ秒(開くたびに値を更新していく)
   "current-milli-seconds-test"
   currentMilliKey
+  ※これはlocalStorageのままで良いかも
 
 ・カウントを開始した時刻(日付)のミリ秒を格納する
   "count-start-milli-seconds-test"
@@ -11,6 +12,11 @@ App.tsx
 ・ボタンの状態("1"がtrueで"0"がfalse)
   "local-start-boolean-test"
   localStartBooleanKey
+  ※これはlocalStorageのままで良いかも
+  　本番では入力フォームをポップアップで開く
+  　カウント中は絶対に開けないようにする
+  　基本はfalseにしておくのが良いと思う(ポップアップを開かない状態)
+  　でも真偽値を扱うならindexedDBの方が無難かも
 
 ・カウント済みのミリ秒(これだけTimer.tsxで使用)
   "counted-milli-test"
@@ -23,3 +29,6 @@ App.tsx
 ・目標の日数(〇時間, 〇日) - この数値に乗算して↑のdeadline-testの値を出す
   "dedline-origin-test"
   localDeadLineOriginKey
+  ※これはlocalStorageのままで良いかも
+  　indexedDBで保持しなければならない値ではないと思う
+  　一瞬だけ格納出来ればいい

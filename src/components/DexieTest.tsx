@@ -6,10 +6,29 @@ import Dexie, { Table } from 'dexie';
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useState } from 'react';
 
+
+// 三つの型を定義する
+// カウントを開始した時刻(日付)のミリ秒を格納する(CountStartSecとかそんな感じ)
+// カウント済みのミリ秒(これだけTimer.tsxで使用)(CountedMilliSecみたいな感じ)
+// 目標の期限(ミリ秒)(DeadlineSecのような感じ)
+// 一気にすべてを定義すると大変そうだから
+// まず↓のToDoを色々変えてやってみる
+
+// Todoから型名を変える(忍耐、禁欲、我慢を表すモノ)
 export interface Todo {
   id?: number;
+  // taskは別名に変える(忍耐する事柄の名前)
   task: string;
+  // カウントを開始した時刻(日付)のミリ秒をnumber型で定義する
+  // counted(仮): number;
+  // completedは
+  // もうカウントが終わったものをtrue
+  // 現在カウント中のものをfalseにする
+  // falseは常に一つのデータだけで
+  // カウントが終了したtrueのモノは履歴として残す(削除可能にする)
+  // 無理そうだった
   completed: boolean;
+  // 目標を達成したか否かのプロパティも必要かもしれない
 }
 
 export class MySubClassedDexie extends Dexie {
