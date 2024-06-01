@@ -1,0 +1,24 @@
+1. 型(interfaceの方が良いかも？)を定義する
+　 export interface Todo {
+      id?: number;
+      task: number;
+      completed: boolean;
+    }
+
+2. export class MySubClassedDexie(クラス名は任意？) extends Dexie
+   を宣言してその中に
+   プロパティ(？)を定義する(Tableを使う)
+   多分複数定義できる
+    todos!: Table<Todo>;
+   constructor()の中で
+    super()にデータベース名を渡す(多分)
+      super('todoApp');
+    バージョンを指定する
+      this.version(1).stores({...})
+      ...の中でオブジェクトストア(todos)の設定をする()
+      ++を付けることでオートインクリメントしプライマリーキーにする
+        todos: '++id, task, completed'
+
+3. 以上を定数dbにする
+   const db = new MySubClassedDexie();
+   const { todos } = db

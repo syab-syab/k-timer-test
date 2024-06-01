@@ -18,7 +18,8 @@ import { useState } from 'react';
 export interface Todo {
   id?: number;
   // taskは別名に変える(忍耐する事柄の名前)
-  task: string;
+  // task: string;
+  task: number;
   // カウントを開始した時刻(日付)のミリ秒をnumber型で定義する
   // counted(仮): number;
   // completedは
@@ -35,6 +36,7 @@ export class MySubClassedDexie extends Dexie {
   // 'todos' is added by dexie when declaring the stores()
   // We just tell the typing system this is the case
   todos!: Table<Todo>;
+  // ↑複数定義できるっぽい
 
   constructor() {
     // super()にデータベース名を渡す(多分)
@@ -44,6 +46,7 @@ export class MySubClassedDexie extends Dexie {
         // オブジェクトストア(todos)の設定をする
         // ++を付けることでオートインクリメントしプライマリーキーにする
       todos: '++id, task, completed'
+      // 複数定義できる
     });
   }
 }
@@ -53,6 +56,8 @@ const db = new MySubClassedDexie();
 const { todos } = db
 
 const DexieTest = () => {
+  // stateはstring型のままだが
+  // indexedDBに格納するときにnumber型に変える
   const [taskInput, setTaskInput] = useState<string>("")
 
   // データベース内のすべてのtodosのデータを取得して配列にする(？)
@@ -63,16 +68,24 @@ const DexieTest = () => {
     // デフォルトのリロードを防ぐ(？)
     e.preventDefault()
     // const taskField = document.querySelector('#taskInput')
-    console.log('=====>', taskInput)
+    console.log('=====>', Number(taskInput))
+
+    if (Number.isNaN(Number(taskInput))) {
+      alert('数字を入力しろ')
+    } else {
+      // addでデータの追加
+      await todos.add({
+        task: Number(taskInput),
+        completed: false,
+      })
+    }
 
     // addでデータの追加
-    await todos.add({
-      // task: taskField['value'],
-      task: taskInput,
-      completed: false,
-    })
+    // await todos.add({
+    //   task: Number(taskInput),
+    //   completed: false,
+    // })
 
-    // taskField['value'] = ''
     setTaskInput("")
   }
 
@@ -104,8 +117,13 @@ const DexieTest = () => {
       <p>{taskInput}</p>
       <h3 className="teal-text center-align">Todo App</h3>
       <form className="add-item-form" onSubmit={(e) => addTask(e)}>
+        {/* type="text"のまま半角数字のみを受け付けるようにしたい */}
         <input
           type="text"
+          // 正規表現で0001とか0を最初に付けるのを入力できなくするか
+          // そこだけ削除して1にしたいする
+          // 時間は0～23までの間の数値をセレクトボックスで選ばせる
+          // pattern="\d*"
           className="itemField"
           placeholder="What do you want to do today?"
           id="taskInput"
